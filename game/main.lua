@@ -2,6 +2,7 @@
 require "globals"
 
 require "guy"
+require "block"
 
 function love.load()
 
@@ -16,6 +17,11 @@ function love.draw ()
   love.graphics.translate (0, love.graphics.getHeight() - 20)
   love.graphics.scale (1, -1)
   guy:draw()
+  love.graphics.push()
+  for _,v in pairs(blocks) do
+    v:draw()
+  end
+  love.graphics.pop()
 end
 
 function love.keypressed(key)

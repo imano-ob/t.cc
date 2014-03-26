@@ -8,12 +8,12 @@ guy = lux.object.new{
   runspeed = 200,
   jumppower = 500,
   grav = 10,
+
   maxvertspeed = 500,
+
   height = 10,
   width = 10,
   
-  jump = nil,
-
   image = nil, -- meh
 
   x = 0,
@@ -23,8 +23,10 @@ guy = lux.object.new{
 }
 
 function guy:update(dt)
-
+  
   local dir = self:dir()
+
+  --Horizontal movement
 
   if self:isrunning() then
     self.curxspd = dir * self.runspeed
@@ -34,13 +36,18 @@ function guy:update(dt)
 
   self.x = self.x + self.curxspd * dt
 
+  --jumping
+
   if self:tryjump() and self:canjump() then
     self.curyspd = self.jumppower
   end
 
+  --vertical movement
+
   if self.y > 0 then
     self.curyspd = self.curyspd - self.grav
   end
+
   if math.abs(self.curyspd) > self.maxvertspeed then
     if self.curyspd < 0 then
       self.curyspd = -self.maxvertspeed
@@ -48,13 +55,15 @@ function guy:update(dt)
       self.curyspd = self.maxvertspeed
     end	
   end	
+
   self.y = self.y + self.curyspd * dt
+
   if self.y < 0 then self.y = 0 end
---  print("a")
+
 end
 
 function guy:draw()
-  love.graphics.rectangle ("fill", self.x, self.y, self.height, self.width)
+  love.graphics.rectangle ("fill", self.x, self.y, self.width, self.height )
 end
 
 function guy:dir()
@@ -72,11 +81,6 @@ function guy:isrunning()
 end
 
 function guy:tryjump()
-  --if self.jump then
-  --  self.jump = false
-  --  return true
-  --end	
-  --return false
   return pressedthisframe[" "]
 end
 
