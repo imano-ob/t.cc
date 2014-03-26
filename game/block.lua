@@ -8,15 +8,16 @@ block = lux.object.new{
   y = 0,
   width = 0,
   height = 0,
-  --color = "red",
+  color = {
+    255,
+    0,
+    0,
+  },
 }
 
 function block:draw()
-  love.graphics.push()
-  --love.graphics.setColor(self.color)
-  love.graphics.setColor(255, 0, 0, 255)
+  love.graphics.setColor(self.color)
   love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
-  love.graphics.pop()
 end
 
 blocks = {}

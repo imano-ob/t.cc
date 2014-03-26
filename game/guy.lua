@@ -3,6 +3,8 @@ require "lux.object"
 
 require "globals"
 
+require "block"
+
 guy = lux.object.new{
   speed = 100,
   runspeed = 200,
@@ -15,6 +17,11 @@ guy = lux.object.new{
   width = 10,
   
   image = nil, -- meh
+  color = {
+    255,
+    255,
+    255,
+  },
 
   x = 0,
   y = 0,
@@ -44,10 +51,8 @@ function guy:update(dt)
 
   --vertical movement
 
-  if self.y > 0 then
-    self.curyspd = self.curyspd - self.grav
-  end
-
+  self.curyspd = self.curyspd - self.grav
+  
   if math.abs(self.curyspd) > self.maxvertspeed then
     if self.curyspd < 0 then
       self.curyspd = -self.maxvertspeed
@@ -58,11 +63,29 @@ function guy:update(dt)
 
   self.y = self.y + self.curyspd * dt
 
-  if self.y < 0 then self.y = 0 end
+  if self.y < -20 then 
+    self.y = love.graphics.getHeight() 
+    --self.curyspd = 0
+  end
 
+  for _, v in pairs(blocks) do
+    if self.x + self.width >= v.x and v.x + v.width >= self.x then
+      if self.y <= v.y + v.height and self.y + self.height >= v.y then
+        if self.y > v.y then
+          self.y = v.y + v.height
+        else
+          self.y = v.y - self.height
+        end
+        self.curyspd = 0
+      end
+    end
+    
+  end
+  
 end
 
 function guy:draw()
+  love.graphics.setColor(self.color)
   love.graphics.rectangle ("fill", self.x, self.y, self.width, self.height )
 end
 
@@ -85,5 +108,13 @@ function guy:tryjump()
 end
 
 function guy:canjump()
-  return self.y <= 0
+  for _, v in pairs(blocks) do
+    if self.x + self.width >= v.x and v.x + v.width >= self.x and
+      self.y <= v.y + v.height and self.y + self.height >= v.y and
+      self.y > v.y then
+      return true
+    end
+  end
+  return false
+  --return self.y <= 0
 end
