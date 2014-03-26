@@ -13,7 +13,10 @@ math.random()
 math.random()
 
 function love.load()
-  create()
+  local x 
+  local y
+  x, y = create()
+  guy.x, guy.y = x, y
 end
 
 function love.update (dt)
@@ -36,7 +39,10 @@ function love.keypressed(key)
   pressedthisframe[key] = true
   if key == "p" then
     blocks = {}
-    create()
+    local x
+    local y
+    x,y  = create()
+    guy.x, guy.y = x, y
   end
 end
 
