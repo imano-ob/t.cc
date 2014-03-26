@@ -8,7 +8,7 @@ require "block"
 guy = lux.object.new{
   speed = 100,
   runspeed = 200,
-  jumppower = 500,
+  jumppower = 300,
   grav = 10,
 
   maxvertspeed = 500,
@@ -69,19 +69,15 @@ function guy:update(dt)
   end
 
   for _, v in pairs(blocks) do
-    if self.x + self.width >= v.x and v.x + v.width >= self.x then
-      if self.y <= v.y + v.height and self.y + self.height >= v.y then
-        if self.y > v.y then
-          self.y = v.y + v.height
-        else
-          self.y = v.y - self.height
-        end
-        self.curyspd = 0
+    if iscolliding(self, v) then
+      if self.y > v.y then
+        self.y = v.y + v.height
+      else
+        self.y = v.y - self.height
       end
+      self.curyspd = 0
     end
-    
   end
-  
 end
 
 function guy:draw()
@@ -109,9 +105,7 @@ end
 
 function guy:canjump()
   for _, v in pairs(blocks) do
-    if self.x + self.width >= v.x and v.x + v.width >= self.x and
-      self.y <= v.y + v.height and self.y + self.height >= v.y and
-      self.y > v.y then
+    if iscolliding(self, v) and self.y > v.y then
       return true
     end
   end

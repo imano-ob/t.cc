@@ -22,7 +22,7 @@ end
 
 blocks = {}
 
-table.insert( 
+--[[table.insert( 
               blocks,
               block:new{
                 x = 200,
@@ -31,3 +31,4 @@ table.insert(
                 width = 200,
               }
             )
+]]

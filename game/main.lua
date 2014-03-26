@@ -3,9 +3,10 @@ require "globals"
 
 require "guy"
 require "block"
+require "gen"
 
 function love.load()
-
+  create()
 end
 
 function love.update (dt)
