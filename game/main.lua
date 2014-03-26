@@ -5,6 +5,13 @@ require "guy"
 require "block"
 require "gen"
 
+--seed
+math.randomseed(os.time())
+
+--waste RNs for great entropy
+math.random()
+math.random()
+
 function love.load()
   create()
 end
@@ -27,6 +34,10 @@ end
 
 function love.keypressed(key)
   pressedthisframe[key] = true
+  if key == "p" then
+    blocks = {}
+    create()
+  end
 end
 
 function love.keyreleased(key)
