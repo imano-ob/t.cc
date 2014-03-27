@@ -1,6 +1,6 @@
 
 require "block"
-
+require "stage"
 
 function create(info)
 
@@ -21,6 +21,8 @@ function create(info)
   local xvar = 30
   local yvar = 30
   
+  if not stage then return end
+
   if info then
     x = info.x or x
     y = info.y or y
@@ -46,7 +48,7 @@ function create(info)
       firsty = y + h
     end
     table.insert(
-      blocks,
+      stage.blocks,
       block:new{
         x = x,
         y = y,

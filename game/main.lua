@@ -3,6 +3,7 @@ require "globals"
 
 require "guy"
 require "block"
+require "stage"
 require "gen"
 
 --seed
@@ -12,15 +13,42 @@ math.randomseed(os.time())
 math.random()
 math.random()
 
+info = {
+  n = 5,
+  
+  x = 30,
+  y = 300,
+  
+  xdiff = 20,
+  ydiff = 20,
+  
+  width = 50,
+  height = 20,
+  
+  wvar = 20,
+  hvar = 10,
+
+  xvar = 30,
+  yvar = 30,
+}
+
+local x
+local y
+
 function love.load()
-  local x 
-  local y
-  x, y = create()
+  x, y = create(info)
   guy.x, guy.y = x, y
 end
 
+
 function love.update (dt)
+  if stage:done() then
+    stage:reset()
+    x, y = create(info)
+    guy.x, guy.y = x,y
+  end   
   guy:update(dt)
+  stage:update(dt)
   pressedthisframe = {}
 end
 
@@ -28,9 +56,7 @@ function love.draw ()
   love.graphics.push()
   love.graphics.translate (0, love.graphics.getHeight() - 20)
   love.graphics.scale (1, -1)
-  for _,v in pairs(blocks) do
-    v:draw()
-  end
+  stage:draw()
   guy:draw()
   love.graphics.pop()
 end
@@ -38,10 +64,8 @@ end
 function love.keypressed(key)
   pressedthisframe[key] = true
   if key == "p" then
-    blocks = {}
-    local x
-    local y
-    x,y  = create()
+    stage:reset()
+    x,y  = create(info)
     guy.x, guy.y = x, y
   end
 end

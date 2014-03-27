@@ -4,6 +4,7 @@ require "lux.object"
 require "globals"
 
 require "block"
+require "stage"
 
 guy = lux.object.new{
   speed = 100,
@@ -29,7 +30,7 @@ guy = lux.object.new{
   curyspd = 0
 }
 
-function guy:update(dt)
+function guy:update (dt)
   
   local dir = self:dir()
 
@@ -68,7 +69,7 @@ function guy:update(dt)
     --self.curyspd = 0
   end
 
-  for _, v in pairs(blocks) do
+  for _, v in pairs(stage.blocks) do
     if iscolliding(self, v) then
       if self.y > v.y then
         self.y = v.y + v.height
@@ -104,7 +105,7 @@ function guy:tryjump()
 end
 
 function guy:canjump()
-  for _, v in pairs(blocks) do
+  for _, v in pairs(stage.blocks) do
     if iscolliding(self, v) and self.y > v.y then
       return true
     end
