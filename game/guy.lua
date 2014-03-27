@@ -64,10 +64,7 @@ function guy:update (dt)
 
   self.y = self.y + self.curyspd * dt
 
-  if self.y < -20 then 
-    self.y = love.graphics.getHeight() 
-    --self.curyspd = 0
-  end
+  --crappy collision
 
   for _, v in pairs(stage.blocks) do
     if iscolliding(self, v) then
@@ -79,6 +76,18 @@ function guy:update (dt)
       self.curyspd = 0
     end
   end
+
+  --death
+
+  if self.y < -20 then 
+    stage.deaths = stage.deaths + 1
+    self.x = stage.xbegin
+    self.y = stage.ybegin
+    self.curyspd = 0
+    self.curxspd = 0
+  end
+
+
 end
 
 function guy:draw()

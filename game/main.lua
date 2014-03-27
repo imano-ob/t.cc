@@ -35,17 +35,21 @@ info = {
 local x
 local y
 
+local function setup()
+    stage:reset()
+    x, y = create(info)
+    guy.x, guy.y = x,y
+    stage.xbegin, stage.ybegin = x, y
+end
+
 function love.load()
-  x, y = create(info)
-  guy.x, guy.y = x, y
+  setup()
 end
 
 
 function love.update (dt)
   if stage:done() then
-    stage:reset()
-    x, y = create(info)
-    guy.x, guy.y = x,y
+    setup()
   end   
   guy:update(dt)
   stage:update(dt)
@@ -64,9 +68,7 @@ end
 function love.keypressed(key)
   pressedthisframe[key] = true
   if key == "p" then
-    stage:reset()
-    x,y  = create(info)
-    guy.x, guy.y = x, y
+    setup()
   end
 end
 

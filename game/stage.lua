@@ -6,6 +6,8 @@ stage = {
   tries = 5,
   clear = false,
   deaths = 0,
+  xbegin = nil,
+  ybegin = nil,
 }
 
 function stage:reset()
