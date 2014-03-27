@@ -87,7 +87,11 @@ function guy:update (dt)
     self.curxspd = 0
   end
 
-
+  --success
+  if iscolliding(self, stage.blocks[#stage.blocks]) then
+    stage.clear = true
+  end   
+  
 end
 
 function guy:draw()

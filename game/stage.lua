@@ -24,6 +24,10 @@ function stage:done()
   return self.clear or self.deaths >= self.tries
 end
 
+function stage:success()
+  return self.deaths < self.tries
+end
+
 function stage:draw()
   for _,v in pairs(self.blocks) do
     v:draw()

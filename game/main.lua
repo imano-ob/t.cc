@@ -49,6 +49,17 @@ end
 
 function love.update (dt)
   if stage:done() then
+    if stage:success() then
+      info.n = info.n+1
+      info.xdiff = info.xdiff * 1.1
+      info.ydiff = info.ydiff * 1.1
+      info.width = info.width * 0.9
+    else
+      info.n = math.max(2, info.n-1)
+      info.xdiff = info.xdiff * 0.9
+      info.ydiff = info.ydiff * 0.9
+      info.width = info.width * 1.1
+    end
     setup()
   end   
   guy:update(dt)
