@@ -6,7 +6,7 @@ function create(info)
 
   local n = 5
   
-  local x = 0
+  local x = 30
   local y = 300
   
   local xdiff = 20
@@ -17,6 +17,9 @@ function create(info)
   
   local wvar = 20
   local hvar = 10
+
+  local xvar = 30
+  local yvar = 30
   
   if info then
     x = info.x or x
@@ -26,13 +29,20 @@ function create(info)
     n = info.n or n
     xdiff = info.xdiff or xdiff
     ydiff = info.ydiff or ydiff
+    wvar = info.wvar or  wvar     
+    hvar = info.hvar or hvar     
+    xvar = info.xvar or xvar     
+    yvar = info.yvar or yvar     
   end
-  local firstx = x
-  local firsty = y
+  local firstx
+  local firsty
   for i=1,n do
     local h = height + math.random(-hvar, hvar)
     local w = width + math.random(-wvar, wvar)
+    x = x + math.random(-xvar, xvar)
+    y = y + math.random(-yvar, yvar)
     if i == 1 then
+      firstx = x
       firsty = y + h
     end
     table.insert(
@@ -44,7 +54,7 @@ function create(info)
         width = w,
       }
     )
-    x = x + width + wvar + math.random(0, xdiff)
+    x = x + width + xdiff
     y = y + ((math.random() * 2) - 1) * (height + ydiff)
   end
   return firstx, firsty
