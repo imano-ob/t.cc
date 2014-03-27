@@ -20,6 +20,8 @@ function create(info)
 
   local xvar = 30
   local yvar = 30
+
+  local miny = 0
   
   if not stage then return end
 
@@ -43,6 +45,7 @@ function create(info)
     local w = width + math.random(-wvar, wvar)
     x = x + math.random(-xvar, xvar)
     y = y + math.random(-yvar, yvar)
+    miny = math.min(y, miny)
     if i == 1 then
       firstx = x
       firsty = y + h
@@ -59,5 +62,6 @@ function create(info)
     x = x + width + xdiff
     y = y + ((math.random() * 2) - 1) * (height + ydiff)
   end
+  stage.miny = miny
   return firstx, firsty
 end

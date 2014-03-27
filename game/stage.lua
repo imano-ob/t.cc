@@ -3,11 +3,12 @@ require "globals"
 
 stage = {
   blocks = {},
-  tries = 5,
+  tries = 3,
   clear = false,
   deaths = 0,
   xbegin = nil,
   ybegin = nil,
+  miny = nil,
 }
 
 function stage:reset()

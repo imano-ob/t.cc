@@ -79,7 +79,7 @@ function guy:update (dt)
 
   --death
 
-  if self.y < -20 then 
+  if self.y < stage.miny -20 then 
     stage.deaths = stage.deaths + 1
     self.x = stage.xbegin
     self.y = stage.ybegin

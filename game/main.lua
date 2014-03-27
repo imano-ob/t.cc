@@ -69,11 +69,15 @@ end
 
 function love.draw ()
   love.graphics.push()
-  love.graphics.translate (0, love.graphics.getHeight() - 20)
+  love.graphics.translate (love.graphics.getWidth()/2 -guy.x, love.graphics.getHeight()/2 + guy.y)
   love.graphics.scale (1, -1)
   stage:draw()
   guy:draw()
   love.graphics.pop()
+  for i = 1, (stage.tries - stage.deaths) do
+    love.graphics.setColor(0, 255, 0)
+    love.graphics.circle("fill", love.graphics.getWidth() - 20 * i, 20, 10, 50)
+  end   
 end
 
 function love.keypressed(key)
