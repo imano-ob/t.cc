@@ -1,4 +1,7 @@
 
+require "torch"
+require "nn"
+
 require "globals"
 
 require "guy"
@@ -35,6 +38,70 @@ info = {
 local x
 local y
 
+dataset = {}
+
+function dataset:size()
+  return #self
+end
+
+--hardcoded stuffs
+
+local min = {
+  n = 2,
+  
+  x = 0,
+  y = 0,
+  
+  xdiff = 0,
+  ydiff = 0,
+  
+  width = 20,
+  height = 10,
+  
+  wvar = 0,
+  hvar = 0,
+
+  xvar = 0,
+  yvar = 0,
+}
+
+local max = {
+  n = 50,
+  
+  x = 500,
+  y = 500,
+  
+  xdiff = 100,
+  ydiff = 200,
+  
+  width = 100,
+  height = 50,
+  
+  wvar = 100,
+  hvar = 50,
+
+  xvar = 50,
+  yvar = 50,
+}
+
+local tries = 30
+local expch = 0.05
+
+--ML stuff
+--Shamelessly C&P'd from tutorial
+
+--TODO: figure out what numbers mean
+--TODO: figure out o que tudo mean
+mlp = nn.Sequential()
+mlp:add( nn.Linear(11, 25) ) -- not 10 input, 25 hidden units
+mlp:add( nn.Tanh() ) -- some hyperbolic tangent transfer function
+mlp:add( nn.Linear(25, 4) ) -- not 1 output
+
+criterion = nn.ClassNLLCriterion() --not Mean Squared Error criterion
+trainer = nn.StochasticGradient(mlp, criterion)  
+-- trainer:train(dataset) -- train using some examples
+--End ML
+
 local function setup()
     stage:reset()
     x, y = create(info)
@@ -49,17 +116,37 @@ end
 
 function love.update (dt)
   if stage:done() then
-    if stage:success() then
-      info.n = info.n+1
-      info.xdiff = info.xdiff * 1.1
-      info.ydiff = info.ydiff * 1.1
-      info.width = info.width * 0.9
-    else
-      info.n = math.max(2, info.n-1)
-      info.xdiff = info.xdiff * 0.9
-      info.ydiff = info.ydiff * 0.9
-      info.width = info.width * 1.1
-    end
+    newt = torch.Tensor(11)
+    local i = 1
+    for _,v in pairs(info) do
+      newt[i] = v  
+    end 
+    table.insert(dataset, {newt, stage.deaths + 1})
+    if dataset:size() >= 2 then
+      print(dataset[2][1])
+      trainer:train(dataset)
+      for i = 1,tries do
+        local willexp = math.random() <= expch
+        local j = 1
+        anothert = torch.Tensor(11)
+        for k,_ in pairs(info) do
+          info[k] = math.random(min[k], max[k])
+          anothert[j] = info[k]
+          j = j+1
+        end
+        predict = mlp:forward(anothert)
+        maxp = predict[1]
+        maxk = 1
+        for k = 2,4 do
+          if predict[k] >= maxp then
+            maxk = k
+            maxp = predict[k]
+          end 
+        end     
+        if willexp or maxk == 3 then break end
+      end
+      print(maxk)
+    end           
     setup()
   end   
   guy:update(dt)
