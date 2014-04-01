@@ -95,9 +95,9 @@ local expch = 0.05
 mlp = nn.Sequential()
 mlp:add( nn.Linear(11, 25) ) -- not 10 input, 25 hidden units
 mlp:add( nn.Tanh() ) -- some hyperbolic tangent transfer function
-mlp:add( nn.Linear(25, 4) ) -- not 1 output
+mlp:add( nn.Linear(25, 1) ) -- not 1 output
 
-criterion = nn.ClassNLLCriterion() --not Mean Squared Error criterion
+criterion = nn.MSECriterion() --not Mean Squared Error criterion
 trainer = nn.StochasticGradient(mlp, criterion)  
 -- trainer:train(dataset) -- train using some examples
 --End ML
@@ -120,8 +120,10 @@ function love.update (dt)
     local i = 1
     for _,v in pairs(info) do
       newt[i] = v  
-    end 
-    table.insert(dataset, {newt, stage.deaths + 1})
+    end
+    rest = torch.Tensor(1)
+    rest[1] = stage.deaths
+    table.insert(dataset, {newt, rest})
     if dataset:size() >= 2 then
       print(dataset[2][1])
       trainer:train(dataset)
@@ -135,17 +137,10 @@ function love.update (dt)
           j = j+1
         end
         predict = mlp:forward(anothert)
-        maxp = predict[1]
-        maxk = 1
-        for k = 2,4 do
-          if predict[k] >= maxp then
-            maxk = k
-            maxp = predict[k]
-          end 
-        end     
-        if willexp or maxk == 3 then break end
+        if willexp or predict[1]>= 2 and predict[1] <= 3.5 then break end
+        
       end
-      print(maxk)
+      print(predict[1])
     end           
     setup()
   end   
