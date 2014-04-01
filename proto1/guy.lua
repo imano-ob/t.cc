@@ -68,11 +68,13 @@ function guy:update (dt)
 
   for _, v in pairs(stage.blocks) do
     if iscolliding(self, v) then
-      if self.y > v.y then
+--screw this, teleportames ele pro topo sempre porque fuck it. Also, cansei de
+--atravessar plataformas caindo
+--      if self.y > v.y then
         self.y = v.y + v.height
-      else
-        self.y = v.y - self.height
-      end
+--      else
+--        self.y = v.y - self.height
+--      end
       self.curyspd = 0
     end
   end

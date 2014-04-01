@@ -8,27 +8,16 @@ block = lux.object.new{
   y = 0,
   width = 0,
   height = 0,
-  color = {
+--[[  color = {
     255,
     0,
     0,
-  },
+},]]
 }
 
-function block:draw()
-  love.graphics.setColor(self.color)
+function block:draw(color)
+  love.graphics.setColor(color)
   love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 end
 
 blocks = {}
-
---[[table.insert( 
-              blocks,
-              block:new{
-                x = 200,
-                y = 50,
-                height = 50,
-                width = 200,
-              }
-            )
-]]
