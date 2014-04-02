@@ -68,14 +68,14 @@ local min = {
 }
 
 local max = {
-  n = 50,
+  n = 30,
   
   x = 500,
   y = 500,
   
-  xdiff = 100,
+  xdiff = 250,
   ydiffup = 200,
-  ydiffdown = 500,
+  ydiffdown = love.graphics.getHeight()/2 - 20,
   
   width = 100,
   height = 50,
@@ -117,6 +117,7 @@ local function setup()
     stage:reset()
     x, y = create(info)
     guy.x, guy.y = x,y
+    guy.curyspd, guy.curxspd = 0, 0
     stage.xbegin, stage.ybegin = x, y
 end
 
@@ -138,15 +139,18 @@ local function cleanup()
       anothert = torch.Tensor(infos)
       for k,_ in pairs(info) do
         anothert[j] = math.random()
-        print(anothert[j])
         info[k] = min[k] + anothert[j] * (max[k] - min[k]) 
         j = j+1
       end
       predict = mlp:forward(anothert)
-      if willexp or predict[1]>= 1 and predict[1] <= 3 and predict[2] <= 0.3 then break end
+      if willexp or (predict[1]>= 0.1 and predict[1] <= 0.3 and predict[2] <= 0.3) then
+        if willexp then print ("lets try something new") end
+        print (i)
+        break
+      end
       
     end
-    print(predict[1])
+    print(predict[1] .. " " .. predict[2])
   else 
     if stage:done() then
       info.n = info.n+1
@@ -161,6 +165,11 @@ local function cleanup()
       info.ydiffdown = info.ydiffdown * 0.8
       info.width = info.width * 1.2
     end
+    for k,v in pairs(info) do
+      if info[k] >= max[k] then
+        print(k .. "above max ".. max[k])
+      end       
+    end 
   end
 end
 

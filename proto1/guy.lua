@@ -7,8 +7,8 @@ require "block"
 require "stage"
 
 guy = lux.object.new{
-  speed = 100,
-  runspeed = 200,
+  speed = 200,
+  runspeed = 400,
   jumppower = 300,
   grav = 10,
 
