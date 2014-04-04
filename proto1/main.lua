@@ -87,61 +87,82 @@ local max = {
   yvar = 50,
 }
 
-local infos = 0
+--local infos = 11
 
+--[[
 for _,_ in pairs(info) do
-  infos = infos+1
+  infos = infos+
 end
-
+]]
 
 local tries = 30
 local expch = 0.05
 
---ML stuff
---Shamelessly C&P'd from tutorial
-
---TODO: figure out what numbers mean
---TODO: figure out o que tudo mean
-mlp = nn.Sequential()
-mlp:add( nn.Linear(infos, 25) ) -- not 10 input, 25 hidden units
-mlp:add( nn.Tanh() ) -- some hyperbolic tangent transfer function
-mlp:add( nn.Linear(25, 25) ) -- not 1 output
-mlp:add( nn.Linear(25, 2) ) --?
-
-criterion = nn.MSECriterion() --not Mean Squared Error criterion
-trainer = nn.StochasticGradient(mlp, criterion)  
--- trainer:train(dataset) -- train using some examples
---End ML
 
 local function setup()
     stage:reset()
-    x, y = create(info)
+    prebuild = pregen(info)
+    x, y = create(prebuild)
     guy.x, guy.y = x,y
     guy.curyspd, guy.curxspd = 0, 0
     stage.xbegin, stage.ybegin = x, y
 end
 
 local function cleanup()
-  newt = torch.Tensor(infos)
   local i = 1
-  for k,v in pairs(info) do
-    newt[i] = (v-min[k])/(max[k] - min[k])
+  local j = 1
+  newt = torch.Tensor(infos)
+  for k,v in pairs(prebuild.max) do
+    if max[k] then
+      newt[j] = (v - min[k]) / (max[k] - min[k])
+    else
+      newt[j] = v/max.ydiffdown
+    end 
+    j = j + 1
   end
+  for k,v in pairs(prebuild.min) do
+    if max[k] then
+      newt[i] = (v - min[k]) / (max[k] - min[k])
+    else
+      newt[j] = v/max.ydiffdown
+    end
+    j = j + 1
+  end
+  newt[j] = (#stage.blocks - min.n) / (max.n - min.n)
+  print(newt)
   rest = torch.Tensor(2)
   rest[1] = stage:done() and math.min(stage.deaths/10, 1) or 1
   rest[2] = stage:done() and 0 or 1
+  print(rest)
   table.insert(dataset, {newt, rest})
   if dataset:size() >= 5 then
     trainer:train(dataset)
     for i = 1,tries do
       local willexp = math.random() <= expch
-      local j = 1
       anothert = torch.Tensor(infos)
       for k,_ in pairs(info) do
-        anothert[j] = math.random()
-        info[k] = min[k] + anothert[j] * (max[k] - min[k]) 
-        j = j+1
+        info[k] = min[k] + math.random() * (max[k] - min[k]) 
       end
+      prebuild = pregen(info)
+      j = 1
+      for k,v in pairs(prebuild.max) do
+        if max[k] then
+          anothert[j] = (v - min[k]) / (max[k] - min[k])
+        else
+          anothert[j] = v/max.ydiffdown
+        end 
+        j = j + 1
+      end
+      for k,v in pairs(prebuild.min) do
+        if max[k] then
+          anothert[j] = (v - min[k]) / (max[k] - min[k])
+        else
+          anothert[j] = v/max.ydiffdown
+        end     
+        j = j + 1
+      end
+      anothert[j] = (#prebuild.blocks - min.n) / (max.n - min.n) 
+
       predict = mlp:forward(anothert)
       if willexp or (predict[1]>= 0.1 and predict[1] <= 0.3 and predict[2] <= 0.3) then
         if willexp then print ("lets try something new") end
@@ -175,6 +196,26 @@ end
 
 function love.load()
   setup()
+  infos = 1
+  for k,v in pairs(prebuild.max) do
+    infos = infos + 2
+  end   
+--ML stuff
+--Shamelessly C&P'd from tutorial
+
+--TODO: figure out what numbers mean
+--TODO: figure out o que tudo mean
+  mlp = nn.Sequential()
+  mlp:add( nn.Linear(infos, 25) ) -- not 10 input, 25 hidden units
+  mlp:add( nn.Tanh() ) -- some hyperbolic tangent transfer function
+  mlp:add( nn.Linear(25, 25) ) -- not 1 output
+  mlp:add( nn.Linear(25, 2) ) --?
+
+  criterion = nn.MSECriterion() --not Mean Squared Error criterion
+  trainer = nn.StochasticGradient(mlp, criterion)  
+-- trainer:tr ain(dataset) -- train using some examples
+--End ML
+
 end
 
 
