@@ -129,11 +129,11 @@ local function cleanup()
     j = j + 1
   end
   newt[j] = (#stage.blocks - min.n) / (max.n - min.n)
-  print(newt)
+  --print(newt)
   rest = torch.Tensor(2)
   rest[1] = stage:done() and math.min(stage.deaths/10, 1) or 1
   rest[2] = stage:done() and 0 or 1
-  print(rest)
+ -- print(rest)
   table.insert(dataset, {newt, rest})
   if dataset:size() >= 5 then
     trainer:train(dataset)
@@ -171,7 +171,7 @@ local function cleanup()
       end
       
     end
-    print(predict[1] .. " " .. predict[2])
+--    print(predict[1] .. " " .. predict[2])
   else 
     if stage:done() then
       info.n = info.n+1
