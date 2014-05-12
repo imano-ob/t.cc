@@ -3,9 +3,9 @@ require "lux.object"
 
 require "globals"
 
-local minheight = 20
-local minwidth = 20
-local diff = 5
+local minheight = 5
+local minwidth = 5
+--local diff = 5
 local boxsize = 2
 
 local wtf = true
@@ -43,7 +43,7 @@ function block:__construct ()
     x = self.x + self.width - boxsize,
     y = self.y, -- + diff,
     width = boxsize,
-    height = self.height -- 2 *diff
+    height = self.height --git st- 2 *diff
   }
   self.upcolbox = {
     x = self.x, -- + diff,

@@ -65,14 +65,13 @@ function guy:update(dt)
   end
 
 --collision detection
+  self.ground = false
+  self.wall = false
 
   for _, v in pairs(blocks) do
     colst = v:iscolliding(self)
-    self.ground = false
     if colst then
       if colst.vert > 0 and self.prevy >= v.y + v.height then
-        print ("prevy " .. self.prevy)
-        print ("block " .. v.y + v.height)
         self.curyspd = 0
         self.y = v.height + v.y
         self.ground = true
@@ -80,21 +79,19 @@ function guy:update(dt)
       elseif colst.vert < 0 and self.prevy + self.height <= v.y then
         self.curyspd = 0
         self.y = v.y - self.height
-      end       
+      end            
 
-      self.wall = true
 
       if colst.hor > 0 and self.prevx >= v.x + v.width then
         self.curxspd = 0
         self.x = v.width + v.x
+        self.wall = true
+
       elseif colst.hor < 0 and self.prevx + self.width <= v.x then
         self.curxspd = 0
         self.x = v.x - self.width
-      else
-        self.wall = false
+        self.wall = true
       end
-    else
-      self.air = true
     end
 
   end
