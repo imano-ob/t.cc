@@ -9,6 +9,15 @@ guy = lux.object.new{
   speed = 100,
   runspeed = 200,
   
+  groundaccel = 20,
+  runaccel = 50,
+  airaccel = 15,
+  runairaccel = 30,
+
+  groundtraction = 0.3,
+  rungroundtraction = 0.1,
+  airtraction = 0.05,
+
   jumppower = 200,
   airjumppower = 150,
   walljumppower = 200,
@@ -44,11 +53,46 @@ function guy:update(dt)
   self.prevx = self.x
   self.prevy = self.y
 
+  local xacc
+  local xtract
+  local maxspd
+
   if self:isrunning() then
-    self.curxspd = dir * self.runspeed
-  else	
-    self.curxspd = dir * self.speed
+    maxspd = self.runspeed
+    if self.ground then
+      xacc = self.runaccel
+      xtract = self.rungroundtraction
+    else        
+      xacc = self.runairaccel
+      xtract = self.airtraction
+    end 
+  else
+    maxspd = self.speed
+    if self.ground then
+      xacc = self.groundaccel
+      xtract = self.groundtraction      
+    else
+      xacc = self.airaccel
+      xtract = self.airtraction
+    end
+  end   
+
+  xacc = dir * xacc
+  xacc = xacc + xtract * -self.curxspd
+
+  self.curxspd = self.curxspd + xacc
+
+  if math.abs(self.curxspd) > maxspd then
+    if self.curxspd < 0 then
+      self.curxspd = -maxspd
+    else	
+      self.curxspd = maxspd
+    end	
   end
+
+  if dir == 0 then
+    
+  end   
 
   self.x = self.x + self.curxspd * dt
 
@@ -103,11 +147,14 @@ function guy:update(dt)
         self.curxspd = 0
         self.x = v.width + v.x
         self.wall = 1
+        self.airjump = true
 
       elseif colst.hor < 0 and self.prevx + self.width <= v.x then
         self.curxspd = 0
         self.x = v.x - self.width
         self.wall = -1
+        self.airjump = true
+
       end
     end
 
@@ -120,7 +167,7 @@ function guy:update(dt)
       self.curyspd = self.jumppower
     elseif self.wall then
       self.curyspd = self.walljumppower
-     -- self.curxspd = self.walljumppower * -0.5 * self.wall
+      self.curxspd = self.walljumppower * 2 * self.wall
     elseif self.airjump then
       self.curyspd = self.airjumppower
       self.airjump = false
