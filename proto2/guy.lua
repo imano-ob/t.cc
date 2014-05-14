@@ -8,10 +8,16 @@ require "block"
 guy = lux.object.new{
   speed = 100,
   runspeed = 200,
-  jumppower = 500,
+  
+  jumppower = 200,
+  airjumppower = 150,
+  walljumppower = 200,
+  
   grav = 10,
-
   maxvertspeed = 500,
+
+  wallgrav = 3,
+  maxwallspeed = 100,
 
   height = 10,
   width = 10,
@@ -47,13 +53,24 @@ function guy:update(dt)
   self.x = self.x + self.curxspd * dt
 
   --vertical movement
-    self.curyspd = self.curyspd - self.grav
   
-  if math.abs(self.curyspd) > self.maxvertspeed then
+  local maxyspd
+  local yacc
+
+  if self.wall then
+    maxyspd = self.maxwallspeed
+    yacc = self.wallgrav
+  else  
+    maxyspd = self.maxvertspeed
+    yacc = self.grav
+  end   
+
+  self.curyspd = self.curyspd - yacc
+  if math.abs(self.curyspd) > maxyspd then
     if self.curyspd < 0 then
-      self.curyspd = -self.maxvertspeed
+      self.curyspd = -maxyspd
     else	
-      self.curyspd = self.maxvertspeed
+      self.curyspd = maxyspd
     end	
   end	
 
@@ -85,12 +102,12 @@ function guy:update(dt)
       if colst.hor > 0 and self.prevx >= v.x + v.width then
         self.curxspd = 0
         self.x = v.width + v.x
-        self.wall = true
+        self.wall = 1
 
       elseif colst.hor < 0 and self.prevx + self.width <= v.x then
         self.curxspd = 0
         self.x = v.x - self.width
-        self.wall = true
+        self.wall = -1
       end
     end
 
@@ -99,11 +116,14 @@ function guy:update(dt)
   --jumping
 
   if self:tryjump() then
-    if self.ground or self.airjump then
+    if self.ground then
       self.curyspd = self.jumppower
-      if not self.ground then 
-        self.airjump = false
-      end
+    elseif self.wall then
+      self.curyspd = self.walljumppower
+     -- self.curxspd = self.walljumppower * -0.5 * self.wall
+    elseif self.airjump then
+      self.curyspd = self.airjumppower
+      self.airjump = false
     end 
   end
 
