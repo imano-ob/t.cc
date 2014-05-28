@@ -44,7 +44,7 @@ guy = lux.object.new{
   curyspd = 0
 }
 
-function guy:update(dt)
+function guy:update(st, dt)
   
   local dir = self:dir()
 
@@ -129,7 +129,9 @@ function guy:update(dt)
   self.ground = false
   self.wall = false
 
-  for _, v in pairs(blocks) do
+
+--blocks
+  for _, v in pairs(st.blocks) do
     colst = v:iscolliding(self)
     if colst then
       if colst.vert > 0 and self.prevy >= v.y + v.height then
@@ -159,6 +161,12 @@ function guy:update(dt)
     end
 
   end
+
+  for _, enemy in pairs(st.enemies) do
+    if v:iscolliding(self) then
+      self:die()
+    end    
+  end   
 
   --jumping
 

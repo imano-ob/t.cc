@@ -3,42 +3,14 @@ require "globals"
 
 require "guy"
 require "block"
+require "stage"
 
 function love.load()
-table.insert( 
-              blocks,
-              block:new{
-                x = 200,
-                y = 50,
-                height = 50,
-                width = 200,
-              }
-            )
-
-table.insert( 
-              blocks,
-              block:new{
-                x = 300,
-                y = 130,
-                height = 100,
-                width = 10,
-              }
-            )
-
-table.insert( 
-              blocks,
-              block:new{
-                x = 350,
-                y = 130,
-                height = 100,
-                width = 10,
-              }
-            )
-
+  st = stage:new{}
 end
 
 function love.update (dt)
-  guy:update(dt)
+  guy:update(st, dt)
   pressedthisframe = {}
 end
 
@@ -46,7 +18,7 @@ function love.draw ()
   love.graphics.push()
   love.graphics.translate (0, love.graphics.getHeight() - 20)
   love.graphics.scale (1, -1)
-  for _,v in pairs(blocks) do
+  for _,v in pairs(st.blocks) do
     v:draw()
   end
   guy:draw()
