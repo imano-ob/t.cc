@@ -18,9 +18,7 @@ function love.draw ()
   love.graphics.push()
   love.graphics.translate (0, love.graphics.getHeight() - 20)
   love.graphics.scale (1, -1)
-  for _,v in pairs(st.blocks) do
-    v:draw()
-  end
+  st:draw()
   guy:draw()
   love.graphics.pop()
 end

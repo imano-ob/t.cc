@@ -39,3 +39,12 @@ table.insert(
               }
             )
 end
+
+function stage:draw()
+  for _,v in pairs(self.blocks) do
+    v:draw()
+  end
+  for _,v in pairs(self.enemies) do
+    v:draw()
+  end   
+end
