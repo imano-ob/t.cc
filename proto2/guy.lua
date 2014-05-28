@@ -162,7 +162,7 @@ function guy:update(st, dt)
 
   end
 
-  for _, enemy in pairs(st.enemies) do
+  for _, v in pairs(st.enemies) do
     if v:iscolliding(self) then
       self:die()
     end    
@@ -199,6 +199,10 @@ function guy:dir()
   else
     return 0
   end
+end
+
+function guy:die()
+  print("ohnoes")
 end
 
 function guy:isrunning()

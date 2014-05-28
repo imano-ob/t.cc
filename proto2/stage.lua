@@ -2,6 +2,9 @@
 require "lux.object"
 
 require "block"
+require "enemy"
+require "spike"
+
 
 stage = lux.object.new {
   blocks = {},
@@ -38,6 +41,16 @@ table.insert(
                 width = 10,
               }
             )
+
+table.insert( 
+              self.enemies,
+              spike:new{
+                x = 330,
+                y = 100,
+              }
+            )
+
+
 end
 
 function stage:draw()
