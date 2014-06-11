@@ -14,9 +14,9 @@ guy = lux.object.new{
   airaccel = 15,
   runairaccel = 30,
 
-  groundtraction = 0.3,
-  rungroundtraction = 0.1,
-  airtraction = 0.05,
+  groundfriction = 0.3,
+  rungroundfriction = 0.1,
+  airfriction = 0.05,
 
   jumppower = 200,
   airjumppower = 150,
@@ -44,44 +44,63 @@ guy = lux.object.new{
   curyspd = 0
 }
 
---TODO: Clean up |
---               V
 
 function guy:update(st, dt)
   
-  local dir = self:dir()
+  local prevx = self.x
+  local prevy = self.y
 
-  --Horizontal movement
+  self:horizontalupdate(dt)
+  self:verticalupdate(dt)
 
-  self.prevx = self.x
-  self.prevy = self.y
+  if self.y < -20 then 
+    self:die(st)
+  end
+
+  self:blockcollision(st, prevx, prevy)
+
+  for _, v in pairs(st.enemies) do
+    if v:iscolliding(self) then
+      self:die(st)
+    end    
+  end   
+  
+  self:jump()
+
+end
+
+
+
+function guy:horizontalupdate(dt)
 
   local xacc
-  local xtract
+  local xfriction
   local maxspd
+
+  local dir = self:dir()
 
   if self:isrunning() then
     maxspd = self.runspeed
     if self.ground then
       xacc = self.runaccel
-      xtract = self.rungroundtraction
+      xfriction = self.rungroundfriction
     else        
       xacc = self.runairaccel
-      xtract = self.airtraction
+      xfriction = self.airfriction
     end 
   else
     maxspd = self.speed
     if self.ground then
       xacc = self.groundaccel
-      xtract = self.groundtraction      
+      xfriction = self.groundfriction      
     else
       xacc = self.airaccel
-      xtract = self.airtraction
+      xfriction = self.airfriction
     end
   end   
 
   xacc = dir * xacc
-  xacc = xacc + xtract * -self.curxspd
+  xacc = xacc + xfriction * -self.curxspd
 
   self.curxspd = self.curxspd + xacc
 
@@ -92,15 +111,12 @@ function guy:update(st, dt)
       self.curxspd = maxspd
     end	
   end
-
-  if dir == 0 then
-    
-  end   
-
   self.x = self.x + self.curxspd * dt
+end
 
-  --vertical movement
-  
+
+
+function guy:verticalupdate(dt)
   local maxyspd
   local yacc
 
@@ -122,40 +138,34 @@ function guy:update(st, dt)
   end	
 
   self.y = self.y + self.curyspd * dt
+end
 
-  if self.y < -20 then 
-    self:die(st)
-    -- self.y = love.graphics.getHeight() 
-    --self.curyspd = 0
-  end
 
---collision detection
+
+function guy:blockcollision(st, prevx, prevy)
   self.ground = false
   self.wall = false
 
-
---blocks
   for _, v in pairs(st.blocks) do
-    colst = v:iscolliding(self)
-    if colst then
-      if colst.vert > 0 and self.prevy >= v.y + v.height then
+    collisioninfo = v:iscolliding(self)
+    if collisioninfo then
+      if collisioninfo.vert > 0 and prevy >= v.y + v.height then
         self.curyspd = 0
         self.y = v.height + v.y
         self.ground = true
         self.airjump = true
-      elseif colst.vert < 0 and self.prevy + self.height <= v.y then
+      elseif collisioninfo.vert < 0 and prevy + self.height <= v.y then
         self.curyspd = 0
         self.y = v.y - self.height
       end            
 
-
-      if colst.hor > 0 and self.prevx >= v.x + v.width then
+      if collisioninfo.hor > 0 and prevx >= v.x + v.width then
         self.curxspd = 0
         self.x = v.width + v.x
         self.wall = 1
         self.airjump = true
 
-      elseif colst.hor < 0 and self.prevx + self.width <= v.x then
+      elseif collisioninfo.hor < 0 and prevx + self.width <= v.x then
         self.curxspd = 0
         self.x = v.x - self.width
         self.wall = -1
@@ -163,23 +173,20 @@ function guy:update(st, dt)
 
       end
     end
-
   end
+end
 
-  for _, v in pairs(st.enemies) do
-    if v:iscolliding(self) then
-      self:die(st)
-    end    
-  end   
 
-  --jumping
+
+function guy:jump()
+  local walljumpimpulse = 2
 
   if self:tryjump() then
     if self.ground then
       self.curyspd = self.jumppower
     elseif self.wall then
       self.curyspd = self.walljumppower
-      self.curxspd = self.walljumppower * 2 * self.wall
+      self.curxspd = self.walljumppower * walljumpimpulse * self.wall
     elseif self.airjump then
       self.curyspd = self.airjumppower
       self.airjump = false
@@ -188,7 +195,6 @@ function guy:update(st, dt)
 end
 
 --End update
-
 
 function guy:draw()
   love.graphics.setColor(self.color)
