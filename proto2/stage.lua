@@ -9,6 +9,10 @@ require "spike"
 stage = lux.object.new {
   blocks = {},
   enemies = {},
+  start = {
+    x = nil,
+    y = nil,
+  }
 }
 
 function stage:__construct()
@@ -50,7 +54,9 @@ table.insert(
               }
             )
 
-
+self.start = {
+  x = 300, y = 300,
+}
 end
 
 function stage:draw()

@@ -1,4 +1,6 @@
 
+--require "lux.object"
+
 require "globals"
 
 require "guy"
@@ -7,6 +9,7 @@ require "stage"
 
 function love.load()
   st = stage:new{}
+  guy:reset(st)
 end
 
 function love.update (dt)

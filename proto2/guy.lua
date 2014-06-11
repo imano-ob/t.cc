@@ -44,6 +44,9 @@ guy = lux.object.new{
   curyspd = 0
 }
 
+--TODO: Clean up |
+--               V
+
 function guy:update(st, dt)
   
   local dir = self:dir()
@@ -121,7 +124,8 @@ function guy:update(st, dt)
   self.y = self.y + self.curyspd * dt
 
   if self.y < -20 then 
-    self.y = love.graphics.getHeight() 
+    self:die(st)
+    -- self.y = love.graphics.getHeight() 
     --self.curyspd = 0
   end
 
@@ -164,7 +168,7 @@ function guy:update(st, dt)
 
   for _, v in pairs(st.enemies) do
     if v:iscolliding(self) then
-      self:die()
+      self:die(st)
     end    
   end   
 
@@ -180,11 +184,11 @@ function guy:update(st, dt)
       self.curyspd = self.airjumppower
       self.airjump = false
     end 
-  end
-
-
-  
+  end  
 end
+
+--End update
+
 
 function guy:draw()
   love.graphics.setColor(self.color)
@@ -201,8 +205,15 @@ function guy:dir()
   end
 end
 
-function guy:die()
-  print("ohnoes")
+function guy:reset(st)
+  self.x, self.y = st.start.x, st.start.y
+  self.curyspd, self.curxspd = 0, 0
+  self.airjump = true
+end
+
+function guy:die(st)
+--  print("ohnoes")
+  self:reset(st)
 end
 
 function guy:isrunning()
