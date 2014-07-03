@@ -4,7 +4,7 @@ require "lux.object"
 require "block"
 require "enemy"
 require "spike"
-
+require "fly"
 
 stage = lux.object.new {
   blocks = {},
@@ -54,9 +54,27 @@ table.insert(
               }
             )
 
+table.insert( 
+              self.enemies,
+              fly:new{
+                x = 330,
+                y = 200,
+              }
+            )
+
+
 self.start = {
   x = 300, y = 300,
 }
+end
+
+function stage:update(dt)
+    for _,v in pairs(self.blocks) do
+    v:update(dt)
+  end
+  for _,v in pairs(self.enemies) do
+    v:update(dt)
+  end   
 end
 
 function stage:draw()

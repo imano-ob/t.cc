@@ -2,10 +2,12 @@
 require "lux.object"
 
 rect = lux.object.new{
-   x = nil,
-   y = nil,
-   width = nil,
-   height = nil,
+  x = nil,
+  y = nil,
+  width = nil,
+  height = nil,
+  offsetx = 0,
+  offsety = 0,
 }
 
 function rect:iscolliding(other)
@@ -23,11 +25,13 @@ end
 function rect:shrinkh(n)
   self.x = self.x + n
   self.width = self.width - 2 * n
+  self.offsetx = self.offsetx + n
 end
 
 function rect:shrinkv(n)
   self.y = self.y + n
   self.height = self.height - 2 * n
+  self.offsety = self.offsety + n
 end
 
 function rect:shrink(n)

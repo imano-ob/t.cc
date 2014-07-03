@@ -59,6 +59,10 @@ function block:__construct ()
   }
 end     
 
+function block:update(dt)
+
+end
+
 function block:draw()
   love.graphics.setColor(self.color)
   love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)

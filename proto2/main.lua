@@ -14,6 +14,7 @@ end
 
 function love.update (dt)
   guy:update(st, dt)
+  st:update(dt)
   pressedthisframe = {}
 end
 
